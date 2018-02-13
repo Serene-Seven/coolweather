@@ -4,6 +4,7 @@ import org.litepal.crud.DataSupport;
 
 /**
  * Created by Administrator on 2018/2/11.
+ * db包用于将省市县的JSON数据转化为实体类
  */
 
 public class City extends DataSupport {

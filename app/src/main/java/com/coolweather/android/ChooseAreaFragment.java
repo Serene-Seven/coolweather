@@ -2,6 +2,7 @@ package com.coolweather.android;
 
 import android.app.Fragment;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,6 +26,7 @@ import org.litepal.crud.DataSupport;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.WeakHashMap;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -56,7 +58,7 @@ public class ChooseAreaFragment extends Fragment {
     private City selectedCity;
     //记录当前在哪个页面
     private int currentLevel;
-    private final String TAG = "ChooseAreaFragment";
+    //private final String TAG = "ChooseAreaFragment";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -85,6 +87,13 @@ public class ChooseAreaFragment extends Fragment {
                 } else if (currentLevel == LEVEL_CITY) {
                     selectedCity = cityList.get(position);
                     queryCounties();
+                } else if (currentLevel == LEVEL_COUNTY) {
+                    //如果当前是在县级，点击进入天气界面，关掉当前的省市县选择界面。
+                    String weatherId = countyList.get(position).getWeatherId();
+                    Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                    intent.putExtra("weather_id", weatherId);
+                    startActivity(intent);
+                    getActivity().finish();
                 }
             }
         });
@@ -190,7 +199,7 @@ public class ChooseAreaFragment extends Fragment {
                     public void run() {
                         //请求失败也要记得关掉通知窗口。
                         closeProgressDialog();
-                        Toast.makeText(getContext(),"加载失败", Toast.LENGTH_SHORT);
+                        Toast.makeText(getContext(),"加载失败", Toast.LENGTH_SHORT).show();
                     }
                 });
 

@@ -5,6 +5,8 @@ import android.text.TextUtils;
 import com.coolweather.android.db.City;
 import com.coolweather.android.db.County;
 import com.coolweather.android.db.Province;
+import com.coolweather.android.gson.Weather;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -12,7 +14,7 @@ import org.json.JSONObject;
 
 /**
  * Created by Administrator on 2018/2/11.
- * 该工具类用来解析和处理服务器返回的JSON格式的省市县数据
+ * 该工具类用来解析和处理服务器返回的JSON格式的省市县数据、JSON格式的天气数据
  * 解析成实体类对象再调用save()函数储存到数据库中
  * 你要知道：用litepal定义的类一定要有id，而且id就是默认自增长的主键
  * 所以这里每次都直接读取到实体类然后不用setId，save的时候就会帮我们set一个自增长的id！
@@ -83,5 +85,20 @@ public class Utility {
             }
         }
         return false;
+    }
+
+    /**
+     * 将返回的JSON天气数据解析成Weather实体类
+     */
+    public static Weather handleWeatherResponse(String response) {
+        try {
+            JSONObject jsonObject = new JSONObject(response);
+            JSONArray jsonArray = jsonObject.getJSONArray("HeWeather");
+            String weatherContent = jsonArray.getJSONObject(0).toString();
+            return new Gson().fromJson(weatherContent, Weather.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
